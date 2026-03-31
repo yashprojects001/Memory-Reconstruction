@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Memory Reconstruction</title>
+
+<style>
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background: #0f0f0f;
+    color: white;
+    text-align: center;
+    padding: 50px;
+    transition: 0.5s;
+}
+
+textarea {
+    width: 60%;
+    height: 120px;
+    padding: 15px;
+    border-radius: 10px;
+    border: none;
+    outline: none;
+    font-size: 16px;
+}
+
+button {
+    margin-top: 20px;
+    padding: 12px 30px;
+    border: none;
+    border-radius: 20px;
+    background: #ff4d6d;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+#output {
+    margin-top: 40px;
+    font-size: 20px;
+    min-height: 80px;
+}
+
+#confidence {
+    margin-top: 20px;
+    font-size: 14px;
+    opacity: 0.7;
+}
+</style>
+</head>
+
+<body>
+
+<h1>🧠 Memory Reconstruction</h1>
+<p>Write a memory. Watch it change.</p>
+
+<textarea id="memoryInput" placeholder="Type your memory here..."></textarea>
+<br>
+<button onclick="reconstruct()">Reconstruct</button>
+
+<div id="output"></div>
+<div id="confidence"></div>
+
+<script>
+const wordsMap = {
+    "happy": ["uncertain", "strange", "distant"],
+    "friend": ["someone", "a stranger", "a shadow"],
+    "school": ["place", "building", "somewhere"],
+    "love": ["attachment", "illusion", "habit"],
+    "day": ["moment", "time", "blur"]
+};
+
+function distortWord(word) {
+    let lower = word.toLowerCase();
+    if (wordsMap[lower]) {
+        let options = wordsMap[lower];
+        return options[Math.floor(Math.random() * options.length)];
+    }
+    return word;
+}
+
+function reconstruct() {
+    let input = document.getElementById("memoryInput").value;
+    let words = input.split(" ");
+    let output = document.getElementById("output");
+    let confidence = document.getElementById("confidence");
+
+    output.innerText = "";
+    let index = 0;
+
+    let interval = setInterval(() => {
+        if (index < words.length) {
+            let changed = Math.random() < 0.4 ? distortWord(words[index]) : words[index];
+            output.innerText += changed + " ";
+            index++;
+
+            // color shift
+            document.body.style.background = `rgb(${20 + index*3}, 10, 20)`;
+
+            // confidence drop
+            let conf = Math.max(0, 100 - index * 5);
+            confidence.innerText = "Memory Confidence: " + conf + "%";
+
+        } else {
+            clearInterval(interval);
+            confidence.innerText += "  |  Reconstruction Complete.";
+        }
+    }, 300);
+}
+</script>
+
+</body>
+</html>
